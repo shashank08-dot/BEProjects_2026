@@ -26,11 +26,18 @@
 </div>
 
 <hr>
-<hr>
-<h2> Team-08 </h2>
-1CR22CS225- V Mathesh
-1CR22CS079- Kavya M
-1CR22CS226- Poorab R Jain
+
+
+<div align="center">
+<h2>👥 Team-08</h2>
+
+| USN | Student Name |
+| :---: | :---: |
+| **1CR22CS225** | V Mathesh |
+| **1CR22CS079** | Kavya M |
+| **1CR22CS226** | Poorab R Jain |
+
+</div>
 <hr>
 <h2>✨ Key Features</h2>
 <ul>
