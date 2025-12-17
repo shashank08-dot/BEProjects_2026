@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>User Profile | FakeNewsDetection</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --danger: #e74c3c;
+      --danger-dark: #c0392b;
+      --success: #2ecc71;
+      --success-dark: #27ae60;
+      --warning: #f39c12;
+      --warning-dark: #e67e22;
+      --text: #2c3e50;
+      --text-light: #7f8c8d;
+      --bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --border-radius: 12px;
+      --box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+    
+    .profile-container {
+      max-width: 700px;
+      margin: 2rem auto;
+      animation: fadeIn 0.6s ease-out;
+    }
+    
+    .profile-card {
+      background: var(--card-bg);
+      padding: 2.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .profile-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+    
+    .profile-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background: linear-gradient(to bottom, var(--primary), var(--success));
+    }
+    
+    h2 {
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 1.75rem;
+    }
+    
+    h2 i {
+      font-size: 1.5rem;
+      color: var(--primary);
+    }
+    
+    .profile-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .profile-image-container {
+      position: relative;
+    }
+    
+    img.profile-image {
+      width: 150px;
+      height: 150px;
+      border-radius: var(--border-radius);
+      object-fit: cover;
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+      border: 4px solid white;
+    }
+    
+    img.profile-image:hover {
+      transform: scale(1.03);
+    }
+    
+    .profile-details {
+      flex: 1;
+    }
+    
+    .profile-field {
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: flex-start;
+      animation: slideIn 0.5s ease-out;
+      animation-fill-mode: backwards;
+    }
+    
+    .profile-field:nth-child(1) { animation-delay: 0.1s; }
+    .profile-field:nth-child(2) { animation-delay: 0.2s; }
+    .profile-field:nth-child(3) { animation-delay: 0.3s; }
+    .profile-field:nth-child(4) { animation-delay: 0.4s; }
+    
+    .profile-field strong {
+      display: inline-block;
+      width: 140px;
+      font-weight: 500;
+      color: var(--text-light);
+    }
+    
+    .profile-field span {
+      flex: 1;
+      font-weight: 400;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 0.35rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+    
+    .status-approved {
+      background-color: rgba(46, 204, 113, 0.1);
+      color: var(--success-dark);
+    }
+    
+    .status-pending {
+      background-color: rgba(243, 156, 18, 0.1);
+      color: var(--warning-dark);
+    }
+    
+    .status-rejected {
+      background-color: rgba(231, 76, 60, 0.1);
+      color: var(--danger-dark);
+    }
+    
+    .action-section {
+      margin-top: 2.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(0,0,0,0.05);
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    form.unapprove-form {
+      margin-top: 1.5rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+    
+    textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: var(--border-radius);
+      font-family: 'Poppins', sans-serif;
+      resize: vertical;
+      min-height: 100px;
+      transition: var(--transition);
+    }
+    
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+    
+    button.unapprove-btn {
+      background-color: var(--danger);
+      border: none;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    button.unapprove-btn:hover {
+      background-color: var(--danger-dark);
+      transform: translateY(-2px);
+    }
+    
+    button.unapprove-btn:active {
+      transform: translateY(0);
+    }
+    
+    a.back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: var(--transition);
+      padding: 0.5rem 1rem;
+      border-radius: var(--border-radius);
+    }
+    
+    a.back-link:hover {
+      background-color: rgba(67, 97, 238, 0.1);
+      transform: translateX(-5px);
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideIn {
+      from { 
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to { 
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes fadeInUp {
+      from { 
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to { 
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .profile-header {
+        flex-direction: column;
+      }
+      
+      .profile-card {
+        padding: 1.5rem;
+      }
+      
+      body {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="profile-container">
+    <div class="profile-card">
+      <div class="profile-header">
+        {% if user.profile_image %}
+        <div class="profile-image-container">
+          <img src="{{ url_for('static', filename='uploads/' ~ user.profile_image) }}" 
+               alt="Profile Image" 
+               class="profile-image" />
+        </div>
+        {% endif %}
+        
+        <div class="profile-details">
+          <h2><i class="fas fa-user-circle"></i> {{ user.full_name }}</h2>
+          
+          <div class="profile-field">
+            <strong><i class="fas fa-envelope"></i> Email:</strong>
+            <span>{{ user.email }}</span>
+          </div>
+          
+          <div class="profile-field">
+            <strong><i class="fas fa-phone"></i> Phone:</strong>
+            <span>{{ user.phone_number or "N/A" }}</span>
+          </div>
+          
+          <div class="profile-field">
+            <strong><i class="fas fa-user-shield"></i> Status:</strong>
+            <span class="status-badge status-{{ user.status }}">{{ user.status | capitalize }}</span>
+          </div>
+        </div>
+      </div>
+      
+      {% if user.status == 'approved' %}
+      <div class="action-section">
+        <form class="unapprove-form" action="{{ url_for('admin.unapprove_user', user_id=user._id) }}" method="POST" onsubmit="return confirm('Are you sure you want to unapprove this user?');">
+          <div class="form-group">
+            <label for="reason"><i class="fas fa-exclamation-triangle"></i> Reason for unapproval:</label>
+            <textarea name="reason" id="reason" rows="3" required placeholder="Please provide a reason for unapproving this user..."></textarea>
+          </div>
+          <button type="submit" class="unapprove-btn">
+            <i class="fas fa-user-times"></i> Unapprove User
+          </button>
+        </form>
+      </div>
+      {% endif %}
+      
+      <a href="{{ url_for('admin.admin_dashboard') }}" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // Add some interactive animations
+    document.addEventListener('DOMContentLoaded', function() {
+      const profileCard = document.querySelector('.profile-card');
+      
+      // Add hover effect to profile card
+      profileCard.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-5px)';
+      });
+      
+      profileCard.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+      });
+      
+      // Add click animation to buttons
+      const buttons = document.querySelectorAll('button, a.back-link');
+      buttons.forEach(button => {
+        button.addEventListener('click', function(e) {
+          if(this.tagName === 'A' || this.type === 'submit') {
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+              this.style.transform = 'scale(1)';
+            }, 200);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

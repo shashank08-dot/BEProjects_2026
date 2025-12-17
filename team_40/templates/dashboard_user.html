@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>User Dashboard | PlantGuard</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2d572c; /* Dark apple green */
+      --primary-dark: #1e3e1e; /* Darker apple green */
+      --secondary: #8bc34a; /* Apple leaf green */
+      --accent: #4caf50; /* Fresh apple green */
+      --light-bg: #121f13; /* Dark background */
+      --dark-text: #e0e0e0;
+      --light-text: #f5f5f5;
+      --alert: #e74c3c;
+      --success: #2ecc71;
+      --warning: #f39c12;
+      --gray: #95a5a6;
+      --white: #ffffff;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light-bg);
+      margin: 0;
+      padding: 0;
+      color: var(--dark-text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      width: 250px;
+      background-color: var(--primary-dark);
+      color: var(--light-text);
+      padding: 20px 0;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 20px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 20px;
+    }
+
+    .sidebar-brand i {
+      color: var(--secondary);
+      font-size: 24px;
+      margin-right: 10px;
+    }
+
+    .sidebar-brand span {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .sidebar-menu {
+      padding: 0 15px;
+    }
+
+    .sidebar-menu a {
+      display: flex;
+      align-items: center;
+      color: var(--light-text);
+      text-decoration: none;
+      padding: 12px 15px;
+      margin-bottom: 5px;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar-menu a:hover {
+      background-color: var(--primary);
+      transform: translateX(5px);
+    }
+
+    .sidebar-menu a.active {
+      background-color: var(--accent);
+      color: var(--primary-dark);
+      font-weight: 500;
+    }
+
+    .sidebar-menu a i {
+      width: 25px;
+      font-size: 0.9em;
+      margin-right: 10px;
+    }
+
+    /* Main Content Styles */
+    .main-content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    /* Dashboard Styles */
+    .dashboard-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: calc(100vh - 40px);
+      padding: 30px 20px;
+    }
+
+    .dashboard {
+      background: rgba(45, 87, 44, 0.8);
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+      text-align: center;
+      max-width: 600px;
+      width: 90%;
+      border: 1px solid rgba(139, 195, 74, 0.2);
+      transform: translateY(0);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      backdrop-filter: blur(5px);
+    }
+
+    .dashboard:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+      font-size: 32px;
+      color: var(--secondary);
+      margin-bottom: 15px;
+      font-weight: 700;
+      position: relative;
+      display: inline-block;
+    }
+
+    h1:after {
+      content: '';
+      position: absolute;
+      width: 50px;
+      height: 3px;
+      background: var(--accent);
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 3px;
+    }
+
+    .user-name {
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    p {
+      font-size: 16px;
+      color: var(--light-text);
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .construction-notice {
+      background-color: rgba(243, 156, 18, 0.15);
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border-left: 4px solid var(--warning);
+      color: var(--light-text);
+    }
+
+    .construction-notice i {
+      color: var(--warning);
+      margin-right: 8px;
+    }
+
+    .dashboard-options {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .dashboard-options a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      text-decoration: none;
+      background: var(--accent);
+      color: var(--primary-dark);
+      padding: 14px 20px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .dashboard-options a:hover {
+      background: var(--secondary);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    }
+
+    .dashboard-options a i {
+      font-size: 1.1em;
+    }
+
+    .dashboard-options a.logout-btn {
+      background: var(--alert);
+      color: white;
+    }
+
+    .dashboard-options a.logout-btn:hover {
+      background: #c0392b;
+    }
+
+    .features-coming {
+      margin-top: 30px;
+      text-align: left;
+    }
+
+    .features-coming h3 {
+      color: var(--secondary);
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+
+    .feature-list {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .feature-list li {
+      padding: 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--light-text);
+    }
+
+    .feature-list li i {
+      color: var(--success);
+    }
+
+    /* Flash Message Styles */
+    .flash-messages {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      max-width: 300px;
+    }
+
+    .flash-message {
+      padding: 15px 25px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      animation: slideIn 0.5s forwards, fadeOut 0.5s 4.5s forwards;
+      display: flex;
+      align-items: center;
+      color: white;
+    }
+
+    .flash-success {
+      background-color: var(--success);
+    }
+
+    .flash-error {
+      background-color: var(--alert);
+    }
+
+    .flash-warning {
+      background-color: var(--warning);
+    }
+
+    .flash-message i {
+      margin-right: 10px;
+      font-size: 1.2em;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 70px;
+        padding: 20px 5px;
+      }
+      
+      .sidebar-brand span, 
+      .sidebar-menu a span {
+        display: none;
+      }
+      
+      .sidebar-menu a {
+        justify-content: center;
+        padding: 12px 5px;
+      }
+      
+      .sidebar-menu a i {
+        margin-right: 0;
+        font-size: 1.1em;
+      }
+
+      .dashboard {
+        padding: 30px 20px;
+      }
+
+      h1 {
+        font-size: 26px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        flex-direction: column;
+      }
+      
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 10px;
+      }
+      
+      .sidebar-brand {
+        padding: 10px;
+        justify-content: flex-start;
+      }
+      
+      .sidebar-menu {
+        display: flex;
+        overflow-x: auto;
+        padding: 10px 5px;
+      }
+      
+      .sidebar-menu a {
+        flex-direction: column;
+        padding: 8px 12px;
+        margin: 0 5px;
+        font-size: 12px;
+      }
+      
+      .sidebar-menu a i {
+        margin-right: 0;
+        margin-bottom: 5px;
+        font-size: 1em;
+      }
+
+      .dashboard-options a {
+        padding: 12px 15px;
+        font-size: 14px;
+      }
+      
+      .flash-messages {
+        max-width: 90%;
+        left: 5%;
+        right: 5%;
+        top: 80px;
+      }
+    }
+  </style>
+  <style>
+.flash-messages {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  width: auto;
+  max-width: 300px;
+}
+.flash-message {
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  opacity: 0.95;
+  animation: fadeIn 0.5s ease;
+}
+.flash-message.success { background-color: #28a745; }
+.flash-message.error { background-color: #dc3545; }
+.flash-message.warning { background-color: #ffc107; color: #212529; }
+.flash-message.info { background-color: #17a2b8; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 0.95; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+        <div class="flash-message {{ category }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <span>PlantGuard</span>
+    </div>
+    <div class="sidebar-menu">
+      <a href="{{ url_for('user.user_dashboard') }}" class="active">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="{{ url_for('user.edit_profile') }}">
+        <i class="fas fa-user-edit"></i>
+        <span>Edit Profile</span>
+      </a>
+        <a href="http://127.0.0.1:5001/home">
+        <i class="fas fa-key"></i>
+        <span>AI ENGINE</span>
+      </a>
+      <a href="{{ url_for('auth.change_password') }}">
+        <i class="fas fa-key"></i>
+        <span>Change Password</span>
+      </a>
+      <a href="{{ url_for('user.view_notifications') }}">
+        <i class="fas fa-bell"></i>
+        <span>Notifications</span>
+      </a>
+      <a href="{{ url_for('auth.logout') }}">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Flash Messages Container -->
+    <div class="flash-messages" id="flashMessages"></div>
+
+    <div class="dashboard-container">
+      <div class="dashboard">
+        <h1>Welcome, <span class="user-name">{{ user.full_name }}</span></h1>
+        <p>Your personal dashboard for orchard management and apple plant monitoring with advanced analytics tools.</p>
+        
+        <div class="construction-notice">
+          <i class="fas fa-tools"></i>
+          <span>Your dashboard is under construction. More powerful features coming soon!</span>
+        </div>
+        
+        <div class="features-coming">
+          <h3>Coming Features:</h3>
+          <ul class="feature-list">
+            <li><i class="fas fa-check-circle"></i> Real-time plant health monitoring</li>
+            <li><i class="fas fa-check-circle"></i> Growth progress tracking</li>
+            <li><i class="fas fa-check-circle"></i> Disease detection system</li>
+            <li><i class="fas fa-check-circle"></i> Harvest prediction analytics</li>
+          </ul>
+        </div>
+        
+        <div class="dashboard-options">
+          <a href="{{ url_for('auth.logout') }}" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+  setTimeout(() => {
+    const messages = document.querySelectorAll('.flash-message');
+    messages.forEach(msg => {
+      msg.style.transition = 'opacity 0.5s ease';
+      msg.style.opacity = '0';
+      setTimeout(() => msg.remove(), 500);
+    });
+  }, 3000); // auto-hide after 3 seconds
+</script>
+</body>
+</html>

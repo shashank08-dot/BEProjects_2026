@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications | PlantGuard</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2d572c; /* Dark apple green */
+            --primary-dark: #1e3e1e; /* Darker apple green */
+            --secondary: #8bc34a; /* Apple leaf green */
+            --accent: #4caf50; /* Fresh apple green */
+            --light-bg: #121f13; /* Dark background */
+            --dark-text: #e0e0e0;
+            --light-text: #f5f5f5;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light-bg);
+            color: var(--dark-text);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: var(--primary-dark);
+            color: var(--light-text);
+            padding: 20px 0;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-brand i {
+            color: var(--secondary);
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .sidebar-brand span {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .sidebar-menu {
+            padding: 0 15px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            color: var(--light-text);
+            text-decoration: none;
+            padding: 12px 15px;
+            margin-bottom: 5px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu a.active {
+            background-color: var(--accent);
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
+
+        .sidebar-menu a i {
+            width: 25px;
+            font-size: 0.9em;
+            margin-right: 10px;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        /* Container Styles */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--secondary);
+            font-size: 2.2rem;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 3px;
+        }
+
+        /* Notifications List */
+        .notifications-list {
+            list-style: none;
+            margin-top: 2rem;
+        }
+
+        .notification-item {
+            background: rgba(45, 87, 44, 0.7);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+            border-left: 4px solid var(--secondary);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .notification-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .notification-item h4 {
+            color: var(--light-text);
+            margin-bottom: 0.8rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .notification-item p {
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .download-btn {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--primary-dark);
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .download-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 195, 74, 0.3);
+        }
+
+        .notification-item small {
+            display: block;
+            color: rgba(255,255,255,0.6);
+            font-size: 0.8rem;
+            text-align: right;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: rgba(45, 87, 44, 0.5);
+            border-radius: 10px;
+            margin-top: 2rem;
+            border: 1px dashed rgba(139, 195, 74, 0.3);
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1.5rem;
+            fill: var(--secondary);
+            opacity: 0.7;
+        }
+
+        .empty-state h3 {
+            color: var(--light-text);
+            margin-bottom: 0.8rem;
+            font-size: 1.3rem;
+        }
+
+        .empty-state p {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.95rem;
+        }
+
+        /* New Notification Indicator */
+        .new-notification {
+            position: relative;
+        }
+
+        .new-notification::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border: 2px solid rgba(139, 195, 74, 0.4);
+            border-radius: 12px;
+            animation: pulse 2s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            70% {
+                transform: scale(1.02);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Flash Messages */
+        .flash-messages {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 300px;
+        }
+
+        .flash-message {
+            padding: 15px 25px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            animation: slideIn 0.5s forwards, fadeOut 0.5s 4.5s forwards;
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+        .flash-success {
+            background-color: var(--success);
+        }
+
+        .flash-error {
+            background-color: var(--danger);
+        }
+
+        .flash-warning {
+            background-color: var(--warning);
+        }
+
+        .flash-message i {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                padding: 20px 5px;
+            }
+            
+            .sidebar-brand span, 
+            .sidebar-menu a span {
+                display: none;
+            }
+            
+            .sidebar-menu a {
+                justify-content: center;
+                padding: 12px 5px;
+            }
+            
+            .sidebar-menu a i {
+                margin-right: 0;
+                font-size: 1.1em;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 10px;
+            }
+            
+            .sidebar-brand {
+                padding: 10px;
+                justify-content: flex-start;
+            }
+            
+            .sidebar-menu {
+                display: flex;
+                overflow-x: auto;
+                padding: 10px 5px;
+            }
+            
+            .sidebar-menu a {
+                flex-direction: column;
+                padding: 8px 12px;
+                margin: 0 5px;
+                font-size: 12px;
+            }
+            
+            .sidebar-menu a i {
+                margin-right: 0;
+                margin-bottom: 5px;
+                font-size: 1em;
+            }
+
+            .notification-item {
+                padding: 1.2rem;
+            }
+
+            .empty-state {
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <span>PlantGuard</span>
+        </div>
+        <div class="sidebar-menu">
+            <a href="{{ url_for('user.user_dashboard') }}">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="{{ url_for('user.edit_profile') }}">
+                <i class="fas fa-user-edit"></i>
+                <span>Edit Profile</span>
+            </a>
+            <a href="{{ url_for('auth.change_password') }}">
+                <i class="fas fa-key"></i>
+                <span>Change Password</span>
+            </a>
+            <a href="{{ url_for('user.view_notifications') }}" class="active">
+                <i class="fas fa-bell"></i>
+                <span>Notifications</span>
+            </a>
+            <a href="{{ url_for('auth.logout') }}">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Flash Messages Container -->
+        <div class="flash-messages" id="flashMessages"></div>
+
+        <div class="container">
+            <h2>Orchard Notifications</h2>
+            
+            <ul class="notifications-list">
+                {% if notifications|length > 0 %}
+                    {% for note in notifications %}
+                        <li class="notification-item {% if loop.index == 1 %}new-notification{% endif %}">
+                            <h4>{{ note.title }}</h4>
+                            <p>{{ note.message }}</p>
+                            {% if note.file %}
+                                <a href="{{ url_for('user.download_file', filename=note.file) }}" class="download-btn">
+                                    <i class="fas fa-download"></i> Download Attachment
+                                </a>
+                            {% endif %}
+                            <small>{{ note.created_at }}</small>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M12 22a10 10 0 1 1 10-10 10 10 0 0 1-10 10zm0-18a8 8 0 1 0 8 8 8 8 0 0 0-8-8z"/>
+                            <path d="M12 17a1 1 0 0 1-1-1v-4a1 1 0 0 1 2 0v4a1 1 0 0 1-1 1zm0-8a1 1 0 1 1 1-1 1 1 0 0 1-1 1z"/>
+                        </svg>
+                        <h3>No notifications yet</h3>
+                        <p>When you have orchard notifications, they'll appear here</p>
+                    </div>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Flash message functionality
+        function showFlashMessage(message, type) {
+            const flashMessages = document.getElementById('flashMessages');
+            const flashDiv = document.createElement('div');
+            flashDiv.className = `flash-message flash-${type}`;
+            
+            // Add appropriate icon based on message type
+            let icon = '';
+            if (type === 'success') icon = '<i class="fas fa-check-circle"></i>';
+            else if (type === 'error') icon = '<i class="fas fa-exclamation-circle"></i>';
+            else if (type === 'warning') icon = '<i class="fas fa-exclamation-triangle"></i>';
+            else icon = '<i class="fas fa-info-circle"></i>';
+            
+            flashDiv.innerHTML = `${icon} ${message}`;
+            flashMessages.appendChild(flashDiv);
+            
+            // Remove the message after animation completes
+            setTimeout(() => {
+                flashDiv.remove();
+            }, 5000);
+        }
+
+        // Example usage (can be triggered by backend or other events)
+        // showFlashMessage('Notification marked as read', 'success');
+        // showFlashMessage('Failed to load notifications', 'error');
+    </script>
+</body>
+</html>

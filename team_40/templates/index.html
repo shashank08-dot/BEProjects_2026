@@ -1,0 +1,2053 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrchardAI | Apple Disease Detection</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <style>
+        :root {
+            --primary: #8BC34A;  /* Apple green */
+            --primary-dark: #689F38;
+            --secondary: #FF9800; /* Orange */
+            --accent: #F44336;    /* Red for alerts */
+            --light: #F5F5F5;
+            --dark: #333333;
+            --gray: #757575;
+            --white: #FFFFFF;
+            --shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Modern Glass Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            transition: all 0.4s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 10px 5%;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .navheader {
+            font-family: 'Pacifico', cursive;
+            font-size: 2rem;
+            color: var(--primary-dark);
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .navbar a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            position: relative;
+            padding: 5px 0;
+            transition: all 0.3s;
+        }
+
+        .navbar a:hover {
+            color: var(--primary-dark);
+        }
+
+        .navbar a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            transition: width 0.3s;
+        }
+
+        .navbar a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section with Parallax */
+        .hero {
+            height: 100vh;
+            background: 
+                linear-gradient(rgba(0,0,0,0.2)), 
+                url('https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80') no-repeat center center/cover;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            color: var(--white);
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+
+        /* Modern Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 12px 32px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: var(--white);
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(139, 195, 74, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(139, 195, 74, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--white);
+            color: var(--white);
+            margin-left: 15px;
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background: var(--white);
+            color: var(--primary-dark);
+        }
+
+        /* Animated Apple Blossoms */
+        .blossoms {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .blossom {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><path fill="%23FFFFFF" d="M25,5c0,0-5,10-5,20s5,20,5,20s5-10,5-20S25,5,25,5z"/><path fill="%23FFFFFF" d="M5,25c0,0,10-5,20-5s20,5,20,5s-10,5-20,5S5,25,5,25z"/><circle fill="%23FFEB3B" cx="25" cy="25" r="5"/></svg>');
+            background-size: contain;
+            opacity: 0.7;
+            animation: float 15s linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Section Styles */
+        .section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .section-title p {
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* About Section */
+        #about {
+            background-color: var(--white);
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            align-items: center;
+        }
+
+        .about-img {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.5s;
+        }
+
+        .about-img:hover {
+            transform: scale(1.03);
+        }
+
+        .about-img img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .about-text h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--primary-dark);
+        }
+
+        /* Disease Cards */
+        .disease-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .disease-card {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.4s;
+        }
+
+        .disease-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .disease-img {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .disease-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s;
+        }
+
+        .disease-card:hover .disease-img img {
+            transform: scale(1.1);
+        }
+
+        .disease-content {
+            padding: 25px;
+        }
+
+        .disease-content h3 {
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+        }
+
+        /* How It Works - Timeline */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            padding: 20px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+        }
+
+        .timeline-item:nth-child(odd) {
+            left: 0;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+        }
+
+        .timeline-content {
+            padding: 20px;
+            background: var(--white);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .timeline-content::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--secondary);
+            border-radius: 50%;
+            top: 30px;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content::after {
+            right: -30px;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content::after {
+            left: -30px;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .testimonial-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.4s;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255,255,255,0.15);
+        }
+
+        /* CTA Section */
+        .cta {
+            background: url('https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=60') no-repeat center center/cover;
+            position: relative;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(139,195,74,0.8), rgba(255,152,0,0.8));
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Enhanced Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: var(--white);
+            padding: 80px 0 20px;
+            position: relative;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .footer-col {
+            padding: 0 15px;
+        }
+
+        .footer-logo {
+            font-family: 'Pacifico', cursive;
+            font-size: 2.2rem;
+            color: var(--white);
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .footer-description {
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .footer-heading {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-heading::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--secondary);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-links a:hover {
+            color: var(--white);
+            transform: translateX(5px);
+        }
+
+        .footer-links i {
+            margin-right: 8px;
+            font-size: 0.8rem;
+            color: var(--secondary);
+        }
+
+        .contact-info {
+            margin-top: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .contact-item i {
+            margin-right: 15px;
+            color: var(--secondary);
+            width: 20px;
+            text-align: center;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            flex-wrap: wrap;
+        }
+
+        .footer-copyright {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+
+        .footer-legal {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-legal a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .footer-legal a:hover {
+            color: var(--white);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            .timeline::before {
+                left: 30px;
+            }
+            
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 0;
+            }
+            
+            .timeline-item:nth-child(even) {
+                left: 0;
+            }
+            
+            .timeline-content::after {
+                left: 20px !important;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .footer-legal {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .navbar-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .btn-group {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn-outline {
+                margin-left: 0;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-col {
+                margin-bottom: 30px;
+            }
+        }
+    </style>
+      <style>
+.flash-messages {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  width: auto;
+  max-width: 300px;
+}
+.flash-message {
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  opacity: 0.95;
+  animation: fadeIn 0.5s ease;
+}
+.flash-message.success { background-color: #28a745; }
+.flash-message.error { background-color: #dc3545; }
+.flash-message.warning { background-color: #ffc107; color: #212529; }
+.flash-message.info { background-color: #17a2b8; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 0.95; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+        <div class="flash-message {{ category }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+  
+    <nav id="navbar" class="navbar">
+        <h1 class="navheader">OrchardAI</h1>
+        <div class="navbar-links">
+            <a href="{{ url_for('main.index') }}">Home</a>
+            <a href="#about">About</a>
+            <a href="#diseases">Diseases</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="{{ url_for('auth.login') }}">Login</a>
+            <a href="{{ url_for('auth.register') }}">Register</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="blossoms" id="blossoms"></div>
+        <div class="hero-content">
+            <h1>AI-Powered Apple plant leaves Disease Detection</h1>
+            <p>Identify diseases in your orchard with 98.5% accuracy using our advanced machine learning technology</p>
+            <div class="btn-group">
+                <a href="{{ url_for('auth.register') }}" class="btn">Scan Your Trees</a>
+                <a href="#how-it-works" class="btn btn-outline">See How It Works</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Protect Your Harvest</h2>
+                <p>Our technology helps farmers detect diseases before they spread</p>
+            </div>
+            <div class="about-grid">
+                <div class="about-img">
+                    <img src="https://m.media-amazon.com/images/I/81EP-9xu51L._UF1000,1000_QL80_.jpg" alt="Apple orchard">
+                </div>
+                <div class="about-text">
+                    <h3>Early Detection Saves Crops</h3>
+                    <p>Our system uses computer vision to analyze leaf patterns, fruit discoloration, and bark abnormalities to identify diseases at their earliest stages.</p>
+                    <p>With real-time analysis and treatment recommendations, you can take action before your entire orchard is affected.</p>
+                    <a href="#how-it-works" class="btn">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="diseases" class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Common Apple Diseases</h2>
+                <p>We detect these and many other apple tree ailments</p>
+            </div>
+            <div class="disease-cards">
+                <div class="disease-card">
+                    <div class="disease-img">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsiEyvZIGojCuS1n5t44_ovnUQaN8bzfwZ7Q&s" alt="Apple scab">
+                    </div>
+                    <div class="disease-content">
+                        <h3>Apple Scab</h3>
+                        <p>Dark, scaly lesions on leaves and fruit caused by the fungus Venturia inaequalis.</p>
+                        <a href="#" class="btn">Treatment Options</a>
+                    </div>
+                </div>
+                <div class="disease-card">
+                    <div class="disease-img">
+                        <img src="https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80" alt="Fire blight">
+                    </div>
+                    <div class="disease-content">
+                        <h3>Fire Blight</h3>
+                        <p>Bacterial infection causing wilting and blackening of blossoms and shoots.</p>
+                        <a href="#" class="btn">Treatment Options</a>
+                    </div>
+                </div>
+                <div class="disease-card">
+                    <div class="disease-img">
+                        <img src="https://images.unsplash.com/photo-1559181567-c3190ca9959b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80" alt="Cedar apple rust">
+                    </div>
+                    <div class="disease-content">
+                        <h3>Cedar Apple Rust</h3>
+                        <p>Yellow-orange spots on leaves that develop into tube-like structures.</p>
+                        <a href="#" class="btn">Treatment Options</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="how-it-works" class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2>How It Works</h2>
+                <p>Simple steps to diagnose your apple trees</p>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>1. Capture Images</h3>
+                        <p>Take photos of affected leaves, fruit, or bark using your smartphone camera.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>2. Upload for Analysis</h3>
+                        <p>Our AI processes the images through multiple neural networks to detect disease patterns.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>3. Get Diagnosis</h3>
+                        <p>Receive immediate results with identified diseases and confidence levels.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>4. Treatment Plan</h3>
+                        <p>Access customized treatment recommendations for your specific situation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials section">
+        <div class="container">
+            <div class="section-title">
+                <h2 style="color: rgb(51, 38, 38);">What Growers Say</h2>
+                <p style="color: white;">Success stories from apple farmers using our system</p>
+            </div>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <p>"OrchardAI saved my entire harvest by detecting fire blight early. The treatment recommendations were spot on!"</p>
+                    <h4>- John P., Washington</h4>
+                </div>
+                <div class="testimonial-card">
+                    <p>"As an organic grower, I rely on this system to catch problems before they spread. The mobile app is incredibly convenient."</p>
+                    <h4>- Maria G., Michigan</h4>
+                </div>
+                <div class="testimonial-card">
+                    <p>"The accuracy is incredible - it identified a rare fungal infection that even our local extension office missed."</p>
+                    <h4>- Robert C., New York</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta section">
+        <div class="container cta-content">
+            <h2>Ready to Protect Your Orchard?</h2>
+            <p>Join thousands of apple growers using OrchardAI to maintain healthy, productive trees</p>
+            <a href="{{ url_for('auth.register') }}" class="btn">Start Free Trial</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">OrchardAI</div>
+                    <p class="footer-description">Advanced AI technology for apple disease detection and prevention.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3 class="footer-heading">Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('main.index') }}"><i class="fas fa-chevron-right"></i> Home</a></li>
+                        <li><a href="#about"><i class="fas fa-chevron-right"></i> About</a></li>
+                        <li><a href="#diseases"><i class="fas fa-chevron-right"></i> Diseases</a></li>
+                        <li><a href="#how-it-works"><i class="fas fa-chevron-right"></i> How It Works</a></li>
+                        <li><a href="{{ url_for('auth.login') }}"><i class="fas fa-chevron-right"></i> Login</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3 class="footer-heading">Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Disease Library</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Treatment Guides</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Growing Tips</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Research Papers</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3 class="footer-heading">Contact Us</h3>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>123 Orchard Lane, Farmville, CA</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>(555) 123-4567</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>info@orchardai.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Mon-Fri: 9AM-5PM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    &copy; 2025 OrchardAI. All rights reserved.
+                </div>
+                <div class="footer-legal">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Create floating blossoms
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('blossoms');
+            const blossomCount = 15;
+            
+            for (let i = 0; i < blossomCount; i++) {
+                const blossom = document.createElement('div');
+                blossom.className = 'blossom';
+                
+                // Random position and animation
+                const leftPos = Math.random() * 100;
+                const animDuration = 10 + Math.random() * 20;
+                const animDelay = Math.random() * 15;
+                const size = 20 + Math.random() * 30;
+                
+                blossom.style.left = `${leftPos}%`;
+                blossom.style.width = `${size}px`;
+                blossom.style.height = `${size}px`;
+                blossom.style.animationDuration = `${animDuration}s`;
+                blossom.style.animationDelay = `-${animDelay}s`;
+                
+                container.appendChild(blossom);
+            }
+
+            // GSAP animations
+            gsap.from('.hero-content', { 
+                duration: 1.5, 
+                y: 50, 
+                opacity: 0, 
+                ease: "power3.out" 
+            });
+
+            gsap.utils.toArray('.section').forEach((section, i) => {
+                gsap.from(section, {
+                    scrollTrigger: {
+                        trigger: section,
+                        start: "top 80%",
+                        toggleActions: "play none none none"
+                    },
+                    y: 50,
+                    opacity: 0,
+                    duration: 0.8,
+                    delay: i * 0.1
+                });
+            });
+
+            // Navbar scroll effect
+            window.addEventListener('scroll', function() {
+                const navbar = document.getElementById('navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            // Smooth scrolling
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+      <script>
+  setTimeout(() => {
+    const messages = document.querySelectorAll('.flash-message');
+    messages.forEach(msg => {
+      msg.style.transition = 'opacity 0.5s ease';
+      msg.style.opacity = '0';
+      setTimeout(() => msg.remove(), 500);
+    });
+  }, 3000); // auto-hide after 3 seconds
+</script>
+</body>
+</html> -->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlantGuard AI | Plant Disease Detection</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <style>
+        :root {
+            --primary: #4CAF50;  /* Plant green */
+            --primary-dark: #388E3C;
+            --secondary: #FFC107; /* Amber */
+            --accent: #F44336;    /* Red for alerts */
+            --light: #F5F5F5;
+            --dark: #333333;
+            --gray: #757575;
+            --white: #FFFFFF;
+            --shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Modern Glass Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            transition: all 0.4s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 10px 5%;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .navheader {
+            font-family: 'Pacifico', cursive;
+            font-size: 2rem;
+            color: var(--primary-dark);
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .navbar a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            position: relative;
+            padding: 5px 0;
+            transition: all 0.3s;
+        }
+
+        .navbar a:hover {
+            color: var(--primary-dark);
+        }
+
+        .navbar a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            transition: width 0.3s;
+        }
+
+        .navbar a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section with Parallax */
+        .hero {
+            height: 100vh;
+            background: 
+                linear-gradient(rgba(0,0,0,0.2)), 
+                url('https://static.vecteezy.com/system/resources/thumbnails/047/385/522/small_2x/young-green-plants-sprouting-from-the-soil-with-the-sun-s-rays-c-free-photo.jpg') no-repeat center center/cover;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            color: var(--white);
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+
+        /* Modern Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 12px 32px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: var(--white);
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--white);
+            color: var(--white);
+            margin-left: 15px;
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background: var(--white);
+            color: var(--primary-dark);
+        }
+
+        /* Animated Leaves */
+        .leaves {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .leaf {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><path fill="%23FFFFFF" d="M25,5C10,15,5,35,25,45s20-20,10-35C25,10,20,5,25,5z"/></svg>');
+            background-size: contain;
+            opacity: 0.7;
+            animation: float 15s linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Section Styles */
+        .section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .section-title p {
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* About Section */
+        #about {
+            background-color: var(--white);
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            align-items: center;
+        }
+
+        .about-img {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.5s;
+        }
+
+        .about-img:hover {
+            transform: scale(1.03);
+        }
+
+        .about-img img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .about-text h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--primary-dark);
+        }
+
+        /* Disease Cards */
+        .disease-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .disease-card {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.4s;
+        }
+
+        .disease-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .disease-img {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .disease-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s;
+        }
+
+        .disease-card:hover .disease-img img {
+            transform: scale(1.1);
+        }
+
+        .disease-content {
+            padding: 25px;
+        }
+
+        .disease-content h3 {
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+        }
+
+        /* How It Works - Timeline */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            padding: 20px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+        }
+
+        .timeline-item:nth-child(odd) {
+            left: 0;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+        }
+
+        .timeline-content {
+            padding: 20px;
+            background: var(--white);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .timeline-content::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--secondary);
+            border-radius: 50%;
+            top: 30px;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content::after {
+            right: -30px;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content::after {
+            left: -30px;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .testimonial-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.4s;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255,255,255,0.15);
+        }
+
+        /* CTA Section */
+        .cta {
+            background: url('https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=60') no-repeat center center/cover;
+            position: relative;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(76,175,80,0.8), rgba(255,193,7,0.8));
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Enhanced Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: var(--white);
+            padding: 80px 0 20px;
+            position: relative;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .footer-col {
+            padding: 0 15px;
+        }
+
+        .footer-logo {
+            font-family: 'Pacifico', cursive;
+            font-size: 2.2rem;
+            color: var(--white);
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .footer-description {
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .footer-heading {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-heading::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--secondary);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-links a:hover {
+            color: var(--white);
+            transform: translateX(5px);
+        }
+
+        .footer-links i {
+            margin-right: 8px;
+            font-size: 0.8rem;
+            color: var(--secondary);
+        }
+
+        .contact-info {
+            margin-top: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .contact-item i {
+            margin-right: 15px;
+            color: var(--secondary);
+            width: 20px;
+            text-align: center;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            flex-wrap: wrap;
+        }
+
+        .footer-copyright {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+
+        .footer-legal {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-legal a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .footer-legal a:hover {
+            color: var(--white);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            .timeline::before {
+                left: 30px;
+            }
+            
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 0;
+            }
+            
+            .timeline-item:nth-child(even) {
+                left: 0;
+            }
+            
+            .timeline-content::after {
+                left: 20px !important;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .footer-legal {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .navbar-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .btn-group {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn-outline {
+                margin-left: 0;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-col {
+                margin-bottom: 30px;
+            }
+        }
+    </style>
+    <style>
+        .flash-messages {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          z-index: 9999;
+          width: auto;
+          max-width: 300px;
+        }
+        .flash-message {
+          padding: 10px 15px;
+          margin-bottom: 10px;
+          border-radius: 5px;
+          color: #fff;
+          font-size: 14px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+          opacity: 0.95;
+          animation: fadeIn 0.5s ease;
+        }
+        .flash-message.success { background-color: #28a745; }
+        .flash-message.error { background-color: #dc3545; }
+        .flash-message.warning { background-color: #ffc107; color: #212529; }
+        .flash-message.info { background-color: #17a2b8; }
+
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 0.95; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="flash-message {{ category }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    
+    <!-- Glass Navbar -->
+    <nav id="navbar" class="navbar">
+        <h1 class="navheader">PlantGuard AI</h1>
+        <div class="navbar-links">
+            <a href="{{ url_for('main.index') }}">Home</a>
+            <a href="#about">About</a>
+            <a href="#diseases">Diseases</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="{{ url_for('auth.login') }}">Login</a>
+            <a href="{{ url_for('auth.register') }}">Register</a>
+        </div>
+    </nav>
+
+    <!-- Hero with Parallax -->
+    <section class="hero">
+        <div class="leaves" id="leaves"></div>
+        <div class="hero-content">
+            <h1>AI-Powered Plant Disease Detection</h1>
+            <p>Identify diseases in your plants with 97.8% accuracy using our advanced machine learning technology</p>
+            <div class="btn-group">
+                <a href="{{ url_for('auth.register') }}" class="btn">Scan Your Plants</a>
+                <a href="#how-it-works" class="btn btn-outline">See How It Works</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Protect Your Plants</h2>
+                <p>Our technology helps gardeners and farmers detect diseases before they spread</p>
+            </div>
+            <div class="about-grid">
+                <div class="about-img">
+                    <img src="https://images.finegardening.com/app/uploads/2018/01/23164307/10-30-2014-lysikov-15.jpg" alt="Various plants">
+                </div>
+                <div class="about-text">
+                    <h3>Early Detection Saves Plants</h3>
+                    <p>Our system uses computer vision to analyze leaf patterns, discoloration, and other abnormalities to identify diseases at their earliest stages.</p>
+                    <p>With real-time analysis and treatment recommendations, you can take action before your entire garden is affected.</p>
+                    <a href="#how-it-works" class="btn">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Diseases Section -->
+    <section id="diseases" class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Common Plant Diseases</h2>
+                <p>We detect these and many other plant ailments</p>
+            </div>
+            <div class="disease-cards">
+                <div class="disease-card">
+                    <div class="disease-img">
+                        <img src="https://www.alchimiaweb.com/blogen/wp-content/uploads/2014/06/WEBO%C3%ADdio-y-Trips-Sala-Yohan-y-Raul_0016.jpg" alt="Powdery Mildew">
+                    </div>
+                    <div class="disease-content">
+                        <h3>Powdery Mildew</h3>
+                        <p>White powdery spots on leaves and stems caused by various fungal species.</p>
+                        <a href="#" class="btn">Treatment Options</a>
+                    </div>
+                </div>
+                <div class="disease-card">
+                    <div class="disease-img">
+                        <img src="https://www.planetnatural.com/wp-content/uploads/2012/12/leaf-spot-fungus-920x518.jpg" alt="Leaf Spot">
+                    </div>
+                    <div class="disease-content">
+                        <h3>Leaf Spot</h3>
+                        <p>Circular spots on leaves that may be brown, black, or yellow, caused by fungi or bacteria.</p>
+                        <a href="#" class="btn">Treatment Options</a>
+                    </div>
+                </div>
+                <div class="disease-card">
+                    <div class="disease-img">
+                        <img src="https://images.immediate.co.uk/production/volatile/sites/10/2018/02/06319244-276f-4044-ad96-b02b7698520b-9f5487b.jpg?quality=90&resize=940,627" alt="Blight">
+                    </div>
+                    <div class="disease-content">
+                        <h3>Blight</h3>
+                        <p>Rapid and complete chlorosis, browning, then death of plant tissues such as leaves, branches, and flowers.</p>
+                        <a href="#" class="btn">Treatment Options</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2>How It Works</h2>
+                <p>Simple steps to diagnose your plants</p>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>1. Capture Images</h3>
+                        <p>Take photos of affected leaves, stems, or fruits using your smartphone camera.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>2. Upload for Analysis</h3>
+                        <p>Our AI processes the images through multiple neural networks to detect disease patterns.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>3. Get Diagnosis</h3>
+                        <p>Receive immediate results with identified diseases and confidence levels.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>4. Treatment Plan</h3>
+                        <p>Access customized treatment recommendations for your specific situation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials section">
+        <div class="container">
+            <div class="section-title">
+                <h2 style="color: white;">What Users Say</h2>
+                <p style="color: white;">Success stories from gardeners and farmers using our system</p>
+            </div>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <p>"PlantGuard AI saved my tomato plants by detecting blight early. The treatment recommendations were spot on!"</p>
+                    <h4>- Sarah T., Home Gardener</h4>
+                </div>
+                <div class="testimonial-card">
+                    <p>"As an organic farmer, I rely on this system to catch problems before they spread. The mobile app is incredibly convenient."</p>
+                    <h4>- Michael R., Organic Farmer</h4>
+                </div>
+                <div class="testimonial-card">
+                    <p>"The accuracy is incredible - it identified a rare fungal infection that even my local nursery missed."</p>
+                    <h4>- Jennifer K., Plant Enthusiast</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta section">
+        <div class="container cta-content">
+            <h2>Ready to Protect Your Plants?</h2>
+            <p>Join thousands of gardeners using PlantGuard AI to maintain healthy, thriving plants</p>
+            <a href="{{ url_for('auth.register') }}" class="btn">Start Free Trial</a>
+        </div>
+    </section>
+
+    <!-- Enhanced Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">PlantGuard AI</div>
+                    <p class="footer-description">Advanced AI technology for plant disease detection and prevention.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3 class="footer-heading">Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('main.index') }}"><i class="fas fa-chevron-right"></i> Home</a></li>
+                        <li><a href="#about"><i class="fas fa-chevron-right"></i> About</a></li>
+                        <li><a href="#diseases"><i class="fas fa-chevron-right"></i> Diseases</a></li>
+                        <li><a href="#how-it-works"><i class="fas fa-chevron-right"></i> How It Works</a></li>
+                        <li><a href="{{ url_for('auth.login') }}"><i class="fas fa-chevron-right"></i> Login</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3 class="footer-heading">Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Disease Library</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Treatment Guides</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Growing Tips</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Research Papers</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3 class="footer-heading">Contact Us</h3>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>123 Garden Lane, Plantville, CA</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>(555) 123-4567</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>info@plantguardai.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Mon-Fri: 9AM-5PM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    &copy; 2025 PlantGuard AI. All rights reserved.
+                </div>
+                <div class="footer-legal">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Create floating leaves
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('leaves');
+            const leafCount = 15;
+            
+            for (let i = 0; i < leafCount; i++) {
+                const leaf = document.createElement('div');
+                leaf.className = 'leaf';
+                
+                // Random position and animation
+                const leftPos = Math.random() * 100;
+                const animDuration = 10 + Math.random() * 20;
+                const animDelay = Math.random() * 15;
+                const size = 20 + Math.random() * 30;
+                
+                leaf.style.left = `${leftPos}%`;
+                leaf.style.width = `${size}px`;
+                leaf.style.height = `${size}px`;
+                leaf.style.animationDuration = `${animDuration}s`;
+                leaf.style.animationDelay = `-${animDelay}s`;
+                
+                container.appendChild(leaf);
+            }
+
+            // GSAP animations
+            gsap.from('.hero-content', { 
+                duration: 1.5, 
+                y: 50, 
+                opacity: 0, 
+                ease: "power3.out" 
+            });
+
+            gsap.utils.toArray('.section').forEach((section, i) => {
+                gsap.from(section, {
+                    scrollTrigger: {
+                        trigger: section,
+                        start: "top 80%",
+                        toggleActions: "play none none none"
+                    },
+                    y: 50,
+                    opacity: 0,
+                    duration: 0.8,
+                    delay: i * 0.1
+                });
+            });
+
+            // Navbar scroll effect
+            window.addEventListener('scroll', function() {
+                const navbar = document.getElementById('navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            // Smooth scrolling
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        setTimeout(() => {
+            const messages = document.querySelectorAll('.flash-message');
+            messages.forEach(msg => {
+                msg.style.transition = 'opacity 0.5s ease';
+                msg.style.opacity = '0';
+                setTimeout(() => msg.remove(), 500);
+            });
+        }, 3000); // auto-hide after 3 seconds
+    </script>
+</body>
+</html>

@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+{% block pagetitle %}
+Plant Disease Detection
+{% endblock pagetitle %}
+{% block body %}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+  :root {
+    --primary: #00b894;
+    --secondary: #0984e3;
+    --accent: #fdcb6e;
+    --light: #f8f9fa;
+    --dark: #2d3436;
+    --transition: all 0.4s ease;
+  }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    background: linear-gradient(120deg, #dfe6e9, #ffeaa7, #fab1a0, #55efc4);
+    background-size: 400% 400%;
+    animation: gradient 20s ease infinite;
+  }
+
+  @keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Hero Section */
+  .hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4rem 2rem;
+    max-width: 1200px;
+    margin: auto;
+  }
+  .hero-text {
+    flex: 1 1 450px;
+  }
+  .hero-text h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 1rem;
+  }
+  .hero-text p {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    color: #444;
+  }
+  .hero-btn {
+    display: inline-block;
+    background: var(--primary);
+    color: #fff;
+    padding: 12px 28px;
+    border-radius: 40px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  }
+  .hero-btn:hover {
+    background: var(--secondary);
+    transform: translateY(-3px);
+  }
+  .hero-anim {
+    flex: 1 1 350px;
+    max-width: 450px;
+    margin-top: 2rem;
+  }
+
+  /* Features */
+  .features {
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+  .features h2 {
+    color: var(--dark);
+    margin-bottom: 2rem;
+    font-size: 2rem;
+  }
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+    gap: 2rem;
+    max-width: 1000px;
+    margin: auto;
+  }
+  .feature-card {
+    background: rgba(255,255,255,0.85);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    transition: var(--transition);
+  }
+  .feature-card:hover {
+    transform: translateY(-8px);
+  }
+  .feature-card h3 {
+    margin-top: 1rem;
+    color: var(--primary);
+  }
+
+  /* Plant Grids */
+  .section-title {
+    text-align: center;
+    margin: 3rem 0 1rem;
+    font-size: 2rem;
+    color: var(--dark);
+  }
+  .plant-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
+    gap: 1.5rem;
+    padding: 1rem 2rem 3rem;
+    max-width: 1200px;
+    margin: auto;
+  }
+  .plant-card {
+    background: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    transform: perspective(1000px) rotateY(0);
+    transition: transform 0.6s;
+  }
+  .plant-card:hover {
+    transform: perspective(1000px) rotateY(5deg) translateY(-5px);
+  }
+  .plant-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+  .plant-name {
+    text-align: center;
+    padding: 1rem;
+    font-weight: 600;
+    color: var(--dark);
+  }
+
+  /* Footer */
+  footer {
+    background: var(--dark);
+    color: #fff;
+    padding: 2rem;
+    text-align: center;
+  }
+</style>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-text">
+    <h1>🌱 Plant Disease Detector</h1>
+    <p>Upload a photo of your fruit or vegetable leaf and let our AI suggest possible diseases and remedies. Save your crops before it's too late!</p>
+    <a href="/index1" class="hero-btn"><i class="fas fa-robot me-2"></i> Try Engine</a>
+  </div>
+  <div class="hero-anim">
+    <div id="hero-lottie" style="height:300px;"></div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="features">
+  <h2>🌟 Why Farmers Love Us</h2>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div id="upload-icon" style="height:80px;"></div>
+      <h3>Easy Upload</h3>
+      <p>Simply upload or click a picture of your leaf.</p>
+    </div>
+    <div class="feature-card">
+      <div id="scan-icon" style="height:80px;"></div>
+      <h3>Instant Scan</h3>
+      <p>AI detects diseases in seconds with high accuracy.</p>
+    </div>
+    <div class="feature-card">
+      <div id="report-icon" style="height:80px;"></div>
+      <h3>Smart Report</h3>
+      <p>Get clear remedies and preventive tips instantly.</p>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- Vegetables -->
+<h2 class="section-title">🥕 Vegetables</h2>
+<div class="plant-grid">
+  <div class="plant-card"><img src="https://www.glutenfreesociety.org/wp-content/uploads/2010/01/corn-and-celiac.webp" class="plant-image"><p class="plant-name">Corn</p></div>
+  <div class="plant-card"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZVYa_RBlmhm9U4LPivanbeLe4aZ1PHG_JJQ&s" class="plant-image"><p class="plant-name">Pepper Bell</p></div>
+  <div class="plant-card"><img src="https://m.economictimes.com/thumb/height-450,width-600,imgsize-111140,msid-72862126/potato-getty.jpg" class="plant-image"><p class="plant-name">Potato</p></div>
+  <div class="plant-card"><img src="https://m.economictimes.com/thumb/msid-66988154,width-1200,height-900,resizemode-4,imgsize-211276/soyabean-agencies.jpg" class="plant-image"><p class="plant-name">Soybean</p></div>
+<!--  <div class="plant-card"><img src="https://post.healthline.com/wp-content/uploads/2020/08/squash-fruit-or-vegetable-732x549-thumbnail-732x549.jpg" class="plant-image"><p class="plant-name">Squash</p></div>-->
+  <div class="plant-card"><img src="https://images-prod.healthline.com/hlcmsresource/images/AN_images/tomatoes-1296x728-feature.jpg" class="plant-image"><p class="plant-name">Tomato</p></div>
+ <div class="plant-card"><img src="https://plantly.io/wp-content/uploads/2023/12/var.webp" class="plant-image"><p class="plant-name">SugarCane</p></div>
+</div>
+<!-- Fruits -->
+<h2 class="section-title">🍎 Fruits</h2>
+<div class="plant-grid">
+<div class="plant-card"><img src="https://www.euroschoolindia.com/blogs/wp-content/uploads/2023/11/nutritional-value-of-mangoes-jpg.webp" class="plant-image"><p class="plant-name">Mango</p></div>
+  <div class="plant-card"><img src="https://post.healthline.com/wp-content/uploads/2020/09/Do_Apples_Affect_Diabetes_and_Blood_Sugar_Levels-732x549-thumbnail-1-732x549.jpg" class="plant-image"><p class="plant-name">Apple</p></div>
+<!--  <div class="plant-card"><img src="https://www.supermarketperimeter.com/ext/resources/0430-blueberries.png?t=1588260305&width=1080" class="plant-image"><p class="plant-name">Blueberry</p></div>-->
+<!--  <div class="plant-card"><img src="https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/slideshows/health_benefits_of_cherries_slideshow/1800x1200_health_benefits_of_cherries_slideshow.jpg" class="plant-image"><p class="plant-name">Cherry</p></div>-->
+  <div class="plant-card"><img src="https://i.ndtvimg.com/i/2015-09/grapes_625x350_61443376353.jpg" class="plant-image"><p class="plant-name">Grape</p></div>
+  <div class="plant-card"><img src="https://cdn.britannica.com/24/174524-050-A851D3F2/Oranges.jpg" class="plant-image"><p class="plant-name">Orange</p></div>
+<!--  <div class="plant-card"><img src="https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/articles/health_tools/the_health_benefits_of_peaches_slideshow/thinkstock_rf_peaches.jpg" class="plant-image"><p class="plant-name">Peach</p></div>-->
+<!--  <div class="plant-card"><img src="https://i0.wp.com/cdn-prod.medicalnewstoday.com/content/images/articles/326/326272/raspberries-with-ketones-in-a-bowl.jpg" class="plant-image"><p class="plant-name">Raspberry</p></div>-->
+  <div class="plant-card"><img src="https://images.indianexpress.com/2020/02/strawberry-1200.jpg" class="plant-image"><p class="plant-name">Strawberry</p></div>
+</div>
+<!-- CTA -->
+<center>
+<!--  <a href="/index" class="hero-btn" style="margin:2rem 0;"><i class="fas fa-robot me-2"></i> Try Engine Now</a>-->
+</center>
+
+<!-- Footer -->
+<footer>
+  <p>🌱 Plant Disease Detection © 2025</p>
+  <p>Made with ❤️ for Farmers</p>
+</footer>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
+<script>
+  // Hero animation
+  lottie.loadAnimation({
+    container: document.getElementById('hero-lottie'),
+    renderer: 'svg',
+    loop: true,
+    autoplay: true,
+    path: 'https://assets9.lottiefiles.com/packages/lf20_tutvdkg0.json'
+  });
+  // Upload icon
+  lottie.loadAnimation({
+    container: document.getElementById('upload-icon'),
+    renderer: 'svg',
+    loop: true,
+    autoplay: true,
+    path: 'https://assets2.lottiefiles.com/packages/lf20_znkxyqbd.json'
+  });
+  // Scan icon
+  lottie.loadAnimation({
+    container: document.getElementById('scan-icon'),
+    renderer: 'svg',
+    loop: true,
+    autoplay: true,
+    path: 'https://assets2.lottiefiles.com/packages/lf20_w51pcehl.json'
+  });
+  // Report icon
+  lottie.loadAnimation({
+    container: document.getElementById('report-icon'),
+    renderer: 'svg',
+    loop: true,
+    autoplay: true,
+    path: 'https://assets2.lottiefiles.com/packages/lf20_fcfjwiyb.json'
+  });
+</script>
+
+{% endblock body %}

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Engine</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --secondary: #2196F3;
+            --accent: #FF9800;
+            --light: #F1F8E9;
+            --dark: #2E7D32;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #E8F5E9 0%, #BBDEFB 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .main-title {
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 50px;
+            padding: 12px 30px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+        }
+        
+        .icon-container {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 30px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .feature-list li {
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.7);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .feature-list li:hover {
+            transform: translateX(10px);
+            background: rgba(255,255,255,0.9);
+        }
+        
+        .feature-list i {
+            margin-right: 10px;
+            font-size: 20px;
+            color: var(--primary);
+        }
+        
+        .camera-container {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .preview-container {
+            position: relative;
+            border: 3px dashed var(--primary);
+            border-radius: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .preview-container:hover {
+            background: rgba(255,255,255,0.8);
+            border-color: var(--secondary);
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .animated-border {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        
+        .animated-border::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            z-index: -1;
+            background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent), var(--primary));
+            background-size: 400% 400%;
+            border-radius: 20px;
+            animation: gradient 3s ease infinite;
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: floatParticle 15s infinite linear;
+        }
+        
+        @keyframes floatParticle {
+            0% { transform: translateY(0) translateX(0); opacity: 0.3; }
+            25% { transform: translateY(-25vh) translateX(10vw); }
+            50% { transform: translateY(0) translateX(20vw); opacity: 0.6; }
+            75% { transform: translateY(25vh) translateX(10vw); }
+            100% { transform: translateY(0) translateX(0); opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container py-5">
+        <!-- Title Section -->
+        <div class="text-center mb-5">
+            <h1 class="display-3 fw-bold main-title mb-3 floating">🌱 Smart Plant AI Engine</h1>
+            <p class="lead text-muted">Your pocket companion for plant health & early disease detection</p>
+        </div>
+
+        <!-- About AI Engine -->
+        <div class="card mb-4 animated-border">
+            <div class="card-body text-center p-5">
+                <div class="icon-container">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h4 class="fw-bold mb-3">Why Detect Plant Disease?</h4>
+                <p class="text-muted">
+                    Early disease detection saves crops, reduces losses, and ensures healthy plant growth.
+                    With the AI Engine, you can detect signs of stress in plants before they spread,
+                    helping farmers and gardeners take timely action.
+                </p>
+            </div>
+        </div>
+
+        <!-- Upload & Analyse -->
+        <div class="card mb-4 animated-border">
+            <div class="card-body p-5">
+                <div class="icon-container">
+                    <i class="fas fa-camera"></i>
+                </div>
+                <h4 class="fw-bold text-center mb-4">Upload or Capture Plant Leaf</h4>
+                <p class="text-muted text-center mb-4">Choose an image from your device or use your camera to scan the plant leaf.</p>
+
+                <form action="/submit" method="POST" enctype="multipart/form-data" class="text-center">
+                    <!-- File Upload -->
+                    <div class="mb-4">
+                        <input type="file" id="actual-btn" hidden name="image" accept="image/*"/>
+                        <label for="actual-btn" class="btn btn-primary me-3">
+                            <i class="fas fa-folder-open me-2"></i>Choose File
+                        </label>
+                        <label id="camera-btn" class="btn btn-primary">
+                            <i class="fas fa-camera me-2"></i>Open Camera
+                        </label>
+                        <p class="small text-muted mt-3" id="file-chosen">No file chosen</p>
+                    </div>
+
+                    <!-- Camera feed -->
+                    <div id="camera-container" class="mb-4 text-center camera-container" style="display: none;">
+                        <video id="camera-feed" width="100%" class="rounded" autoplay></video>
+                        <button type="button" id="capture-btn" class="btn btn-success mt-3">
+                            <i class="fas fa-camera me-2"></i>Capture
+                        </button>
+                    </div>
+
+                    <!-- Preview Image -->
+                    <div class="mb-4 preview-container">
+                        <img id="preview" src="#" alt="Image Preview" class="img-fluid rounded d-none"/>
+                        <div id="preview-placeholder" class="text-center py-5">
+                            <i class="fas fa-image text-muted" style="font-size: 3rem;"></i>
+                            <p class="mt-2 text-muted">Image preview will appear here</p>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary px-5 py-3">
+                        <i class="fas fa-search me-2"></i>Analyse Now
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Care Tips -->
+        <div class="card mb-4 animated-border">
+            <div class="card-body p-5">
+                <div class="icon-container">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h4 class="fw-bold text-center mb-4">Plant Care Tips</h4>
+                <ul class="feature-list list-unstyled">
+                    <li><i class="fas fa-seedling text-success"></i> Rotate crops to maintain healthy soil.</li>
+                    <li><i class="fas fa-tint text-primary"></i> Avoid overwatering & maintain drainage.</li>
+                    <li><i class="fas fa-sun text-warning"></i> Provide adequate sunlight & airflow.</li>
+                    <li><i class="fas fa-broom text-info"></i> Remove diseased leaves promptly.</li>
+                    <li><i class="fas fa-clipboard-check text-secondary"></i> Inspect new plants before adding them to your garden.</li>
+                </ul>
+                <div class="text-center mt-4">
+                    <a target="_blank" href="https://www.thespruce.com/prevent-plant-diseases-in-your-garden-2539511"
+                       class="btn btn-primary">
+                        <i class="fas fa-lightbulb me-2"></i>More Tips
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Benefits -->
+        <div class="card mb-5 animated-border">
+            <div class="card-body text-center p-5">
+                <div class="icon-container">
+                    <i class="fas fa-globe-americas"></i>
+                </div>
+                <h4 class="fw-bold mb-4">How AI Helps You</h4>
+                <div class="row">
+                    <div class="col-md-3 col-6 mb-4">
+                        <div class="p-4 bg-light rounded-3 h-100">
+                            <i class="fas fa-tree text-success fs-1 mb-3"></i>
+                            <h6>Save crops</h6>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-4">
+                        <div class="p-4 bg-light rounded-3 h-100">
+                            <i class="fas fa-chart-line text-success fs-1 mb-3"></i>
+                            <h6>Improve yield</h6>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-4">
+                        <div class="p-4 bg-light rounded-3 h-100">
+                            <i class="fas fa-shield-alt text-success fs-1 mb-3"></i>
+                            <h6>Reduce pesticide use</h6>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-4">
+                        <div class="p-4 bg-light rounded-3 h-100">
+                            <i class="fas fa-globe text-success fs-1 mb-3"></i>
+                            <h6>Healthier environment</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create background particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const colors = ['#4CAF50', '#2196F3', '#FF9800', '#2E7D32'];
+            
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random properties
+                const size = Math.random() * 20 + 5;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.background = color;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.left = `${Math.random() * 100}%`;
+                
+                // Random animation duration
+                const duration = Math.random() * 20 + 10;
+                particle.style.animationDuration = `${duration}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // File upload functionality
+        const actualBtn = document.getElementById('actual-btn');
+        const fileChosen = document.getElementById('file-chosen');
+        const preview = document.getElementById('preview');
+        const previewPlaceholder = document.getElementById('preview-placeholder');
+
+        actualBtn.addEventListener('change', function () {
+            fileChosen.textContent = this.files[0].name;
+            showPreview(this.files[0]);
+        });
+
+        function showPreview(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.classList.remove('d-none');
+                previewPlaceholder.classList.add('d-none');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Camera functionality
+        document.getElementById('camera-btn').addEventListener('click', function () {
+            document.getElementById('camera-container').style.display = 'block';
+            startCamera();
+        });
+
+        async function startCamera() {
+            const video = document.getElementById('camera-feed');
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+            } catch (err) {
+                console.error('Error accessing camera:', err);
+                alert('Unable to access camera. Please check permissions.');
+            }
+        }
+
+        document.getElementById('capture-btn').addEventListener('click', function () {
+            const video = document.getElementById('camera-feed');
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const dataUrl = canvas.toDataURL('image/jpeg');
+            preview.src = dataUrl;
+            preview.classList.remove('d-none');
+            previewPlaceholder.classList.add('d-none');
+
+            const imageBlob = dataURItoBlob(dataUrl);
+            const capturedFile = new File([imageBlob], "camera_image.jpg", { type: 'image/jpeg' });
+
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(capturedFile);
+            actualBtn.files = dataTransfer.files;
+
+            fileChosen.textContent = capturedFile.name;
+            
+            // Stop camera after capture
+            const stream = video.srcObject;
+            if (stream) {
+                const tracks = stream.getTracks();
+                tracks.forEach(track => track.stop());
+            }
+            document.getElementById('camera-container').style.display = 'none';
+        });
+
+        function dataURItoBlob(dataURI) {
+            const byteString = atob(dataURI.split(',')[1]);
+            const arrayBuffer = new ArrayBuffer(byteString.length);
+            const uintArray = new Uint8Array(arrayBuffer);
+            for (let i = 0; i < byteString.length; i++) {
+                uintArray[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([uintArray], { type: 'image/jpeg' });
+        }
+        
+        // Initialize particles and animations
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            
+            // Add animation to cards on scroll
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.2}s`;
+            });
+        });
+    </script>
+</body>
+</html>

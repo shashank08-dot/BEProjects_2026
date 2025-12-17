@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% block pagetitle %}
+{{title}}
+{% endblock pagetitle %}
+{% block body %}
+
+<style>
+  .fade-in {
+    animation: fadeIn 0.8s ease-in-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-custom {
+    border-radius: 15px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: #ffffff;
+  }
+  .card-custom:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  }
+
+  .btn-custom {
+    background: linear-gradient(135deg, #056c1f, #04b84a);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    padding: 8px 20px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+  .btn-custom:hover {
+    background: linear-gradient(135deg, #04b84a, #056c1f);
+    transform: scale(1.05);
+  }
+
+  h1, h5, h6 {
+    color: #05380b;
+  }
+  p {
+    color: #333;
+    line-height: 1.6;
+  }
+</style>
+
+<div class="container fade-in">
+  <!-- Title -->
+  <div class="row mb-5 text-center">
+    <div class="col-lg-10 mx-auto">
+      <h1 class="display-4" style="padding-top: 2%; font-weight: 500;">
+        <b>{{title}} 🍂</b>
+      </h1>
+    </div>
+  </div>
+
+  <!-- Main Image -->
+  <center>
+    <div class="col">
+      <div class="p-3 card-custom" style="width: 30%;">
+        <img src="{{image_url}}" width="350" height="350" class="img-fluid rounded">
+      </div>
+    </div>
+  </center>
+
+  <br>
+
+  <!-- Description Section -->
+  <div class="row">
+    <div class="col mx-auto">
+      <div class="p-5 card-custom">
+        <h5><b>
+          {% if pred==3 or pred==5 or pred==7 or pred==11 or pred==15 or pred==18 or pred==20 or pred==23 or pred==24 or pred==25 or pred==28 or pred==38 %}
+            🌱 Tips to Grow Healthy Plants :
+          {% else %}
+            📖 Brief Description :
+          {% endif %}
+        </b></h5>
+        <p>{{desc}}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Prevention / Benefits -->
+  <div class="row mt-4">
+    <div class="col mx-auto">
+      <div class="p-5 card-custom">
+        <h5><b>
+          {% if pred==3 or pred==5 or pred==7 or pred==11 or pred==15 or pred==18 or pred==20 or pred==23 or pred==24 or pred==25 or pred==28 or pred==38 %}
+            🌿 Benefits :
+          {% else %}
+            🚫 Prevent This Plant Disease By Following Steps :
+          {% endif %}
+        </b></h5>
+        <p>{{prevent}}</p>
+      </div>
+    </div>
+
+    {% if pred!=4 %}
+    <!-- Supplement / Fertilizer -->
+    <div class="col mx-auto">
+      <div class="p-5 card-custom text-center">
+        <h5><b>
+          {% if pred==3 or pred==5 or pred==7 or pred==11 or pred==15 or pred==18 or pred==20 or pred==23 or pred==24 or pred==25 or pred==28 or pred==38 %}
+            🌼 Fertilizer :
+          {% else %}
+            💊 Supplements :
+          {% endif %}
+        </b></h5>
+        <br>
+        <img src="{{simage}}" width="300" height="350" class="img-fluid rounded">
+        <br><br>
+        <h6>{{sname}}</h6>
+        <a target="_blank" href="{{buy_link}}">
+          <button type="button" class="btn btn-custom">Buy Product</button>
+        </a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock body %}
