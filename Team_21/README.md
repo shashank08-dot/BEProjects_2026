@@ -1,6 +1,10 @@
-TEAM 21
-AI-POWERED PUZZLE SOLVER
+---
+title: Ai Powered Crossword Solver
+emoji: 🦀
+colorFrom: gray
+colorTo: red
+sdk: docker
+pinned: false
+---
 
-SYED SHOIAB R (1CR22CS200)
-SAI ROHIT LINGAMPALLI (1CR22CS090)
-SAMUEL MATHEW (1CR22CS164)
+Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference

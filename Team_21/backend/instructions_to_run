@@ -1,0 +1,25 @@
+requires py 3.11 for fasttext
+pip freeze > requirements.txt
+
+deactivate
+
+C:\Projects\Python\Python311\python.exe -m venv fasttext-env
+fasttext-env\Scripts\activate
+
+python -m pip install --upgrade pip
+pip install "numpy>=2.0,<2.3"
+pip install fasttext-wheel==0.9.2
+pip install -r requirements.txt / pip install -r extra_txt_files\requirements.txt
+make sure ctrl+Shift+p interpreter is dsame sa python -c "import sys; print(sys.executable)"
+cause it should be the one inside the virtual environment
+ctrl+shift+p   developer:reload
+ok then because of array copy issue
+pip uninstall numpy  
+pip install "numpy==1.26.4" 
+py api.py
+
+
+
+to run model_training.py
+C:\Projects\Python\Python312\python.exe -m pip install fasttext-wheel
+C:\Projects\Python\Python312\python.exe model_training.py
