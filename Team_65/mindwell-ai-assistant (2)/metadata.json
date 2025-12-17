@@ -1,0 +1,7 @@
+{
+  "name": "MindWell AI Assistant",
+  "description": "A comprehensive mental health application powered by Gemini. It offers an AI-driven questionnaire with personalized reports, a 'Find a Doctor' feature using geolocation, and an interactive mental health chatbot named RIPEX.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
