@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sundarbans Monitoring System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family:Cambria, Cochin, 'Georgia', Times, Times New Roman, serif;
+            color: #333;
+        }
+
+        .header {
+            background-color: #2d5016;
+            padding: 30px 50px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.5em;
+            text-align: left;
+        }
+
+        .banner {
+            width: 100%;
+            height: 400px;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .sections-container {
+            background-color: #0f0c07;
+            padding: 60px 0;
+        }
+
+        .section {
+            max-width: 1400px;
+            margin: 0 auto 80px auto;
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-image {
+            flex: 1;
+            background: #ddd;
+            border: 4px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            overflow: hidden;
+        }
+
+        .section-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .section-button {
+            flex: 2;
+            background: white;
+            border: 4px solid #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 40px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .section-button:hover {
+            background: #f0f0f0;
+            transform: scale(1.02);
+        }
+
+        .section-button h2 {
+            font-size: 2.5em;
+            color: #2d5016;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .section-button p {
+            font-size: 1.2em;
+            color: #555;
+            text-align: center;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .section-button button {
+            background: #2d5016;
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            font-size: 1.3em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .section-button button:hover {
+            background: #3d6520;
+        }
+
+        .section.reverse {
+            flex-direction: row-reverse;
+        }
+
+        .page {
+            display: none;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #2d5016 0%, #2d5016 100%);
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .analysis-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .back-btn {
+            background: #0f0c07;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 30px;
+            transition: background 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #3d6520;
+        }
+
+        .analysis-box {
+            background: white;
+            
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .analysis-box h2 {
+            color: #2d5016;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .upload-area {
+            border: 3px dashed #2d5016;
+            border-radius: 15px;
+            padding: 60px 40px;
+            text-align: center;
+            margin: 30px 0;
+            background: #f8f9fa;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            border-color: #3d6520;
+            background: #e9ecef;
+        }
+
+        .upload-area.dragover {
+            background: #d4e7d4;
+            border-color: #2d5016;
+        }
+
+        .upload-icon {
+            font-size: 4em;
+            color: #2d5016;
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-label {
+            background: #2d5016;
+            color: white;
+            padding: 15px 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        .file-label:hover {
+            background: #3d6520;
+        }
+
+        .preview-container {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .analyze-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            
+            cursor: pointer;
+            font-size: 18px;
+            margin: 20px 0;
+            transition: background 0.3s;
+        }
+
+        .analyze-btn:hover {
+            background: #218838;
+        }
+
+        .analyze-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .results {
+            margin-top: 30px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #28a745;
+        }
+
+        .results h3 {
+            color: #2d5016;
+            margin-bottom: 20px;
+        }
+
+        .result-item {
+            padding: 15px;
+            margin: 10px 0;
+            background: white;
+            border-radius: 8px;
+            font-size: 18px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #2d5016;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            color: #dc3545;
+            padding: 15px;
+            background: #f8d7da;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .success {
+            color: #155724;
+            padding: 15px;
+            background: #d4edda;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .model-status {
+            text-align: center;
+            padding: 15px;
+            margin: 20px 0;
+            background: #ffffff;
+            border-radius: 8px;
+            color: #155724;
+        }
+        .flashcards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 22px;
+    margin-top: 25px;
+}
+
+.flashcard {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+    overflow: hidden;
+    text-align: center;
+    transition: 0.25s ease;
+}
+
+.flashcard img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+}
+
+.flashcard:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+}
+
+.flashcard-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 12px 0 4px;
+    color: #1a1a1a;
+}
+
+.flashcard-scientific {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 15px;
+    font-style: italic;
+}
+
+
+        @media (max-width: 968px) {
+            .section {
+                flex-direction: column !important;
+            }
+
+            .section-image, .section-button {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="home" class="page active">
+        <div class="header">
+            <h1>Sundarbans Monitoring System</h1>
+        </div>
+        <div class="banner">
+            <div class="banner-placeholder">
+                <img src="mangrove.jpg" alt="Sundarbans Banner">
+            </div>
+        </div>
+
+        <div class="sections-container">
+            <div class="section">
+                <div class="section-image">
+                    <img src="tree_species.jpg" alt="Plant Species">
+                </div>
+                <div class="section-button" onclick="navigateTo('plant')">
+                    <h2>FLORA</h2>
+                    <p>The Sundarbans is home to over 300 species of plants, includig 34 mangroves!</p>
+                    <button>Identify Plant Species</button>
+                </div>
+            </div>
+
+            <div class="section reverse">
+                <div class="section-image">
+                    <img src="tiger.jpg" alt="Animal Species">
+                </div>
+                <div class="section-button" onclick="navigateTo('animal')">
+                    <h2>FAUNA</h2>
+                    <p>Explore the many animals that call the Sundarbans Home.</p>
+                    <button>Identify Animal Species</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-image">
+                    <img src="cover.jpg" alt="Forest Cover">
+                </div>
+                <div class="section-button" onclick="navigateTo('forest')">
+                    <h2>FOREST COVER</h2>
+                    <p>Analyze forest coverage from aerial images.</p>
+                    <button>Analyze Forest Cover</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="plant" class="page">
+        <div class="analysis-container">
+            <button class="back-btn" onclick="navigateTo('home')">← Back to Home</button>
+            <div class="analysis-box">
+                <h2>Flora Identification</h2>
+                <p style="font-size: 1.1em; color: #666; margin-bottom: 20px;">Upload an image of a plant to identify its species</p>
+
+                <div class="model-status">
+                    <!-- ✅ Backend server ready! Make sure server.py is running on port 5000 -->
+                </div>
+
+                <div class="upload-area" id="plantUpload" 
+                     ondrop="handleDrop(event, 'plant')" 
+                     ondragover="handleDragOver(event)"
+                     ondragleave="handleDragLeave(event)">
+                    <div class="upload-icon">📤</div>
+                    <h3>Drag & Drop Image Here</h3>
+                    <p>or</p>
+                    <label class="file-label" for="plantFile">Choose File</label>
+                    <input type="file" id="plantFile" accept="image/*" onchange="handleFileSelect(event, 'plant')">
+                </div>
+
+                <div class="preview-container" id="plantPreview"></div>
+                <button class="analyze-btn" id="plantAnalyze" onclick="analyzeImage('plant')" disabled>
+                    Analyze Image
+                </button>
+                <div id="plantResults"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="animal" class="page">
+    <div class="analysis-container">
+        <button class="back-btn" onclick="navigateTo('home')">← Back to Home</button>
+
+        <div class="analysis-box">
+            <h2>Fauna of the Sundarbans</h2>
+
+            <div class="section-intro">
+                <h3>Discover the Wildlife</h3>
+                <p>
+                    The Sundarbans is home to an incredible diversity of wildlife, from the majestic Royal Bengal Tiger 
+                    to the unique saltwater crocodile. Explore the animals that inhabit this unique mangrove ecosystem.
+                </p>
+            </div>
+
+            <div class="flashcards-grid">
+
+                <div class="flashcard">
+                    <img src="Royal-Bengal-Tiger.jpg" alt="Bengal Tiger">
+                    <h4 class="flashcard-title">Royal Bengal Tiger</h4>
+                    <p class="flashcard-scientific">Panthera tigris tigris</p>
+                </div>
+
+                <div class="flashcard">
+                    <img src="Saltwater-Crocodile.jpg" alt="Saltwater Crocodile">
+                    <h4 class="flashcard-title">Saltwater Crocodile</h4>
+                    <p class="flashcard-scientific">Crocodylus porosus</p>
+                </div>
+
+               
+                <div class="flashcard">
+                    <img src="spotted_deer.jpeg" alt="Spotted Deer">
+                    <h4 class="flashcard-title">Spotted Deer (Chital)</h4>
+                    <p class="flashcard-scientific">Axis axis</p>
+                </div>
+
+                
+                <div class="flashcard">
+                    <img src="Ganges_River_Dolphin_cropped.jpg" alt="Ganges River Dolphin">
+                    <h4 class="flashcard-title">Ganges River Dolphin</h4>
+                    <p class="flashcard-scientific">Platanista gangetica</p>
+                </div>
+
+               
+                <div class="flashcard">
+                    <img src="Python.png" alt="Indian Python">
+                    <h4 class="flashcard-title">Indian Python</h4>
+                    <p class="flashcard-scientific">Python molurus</p>
+                </div>
+
+               
+                <div class="flashcard">
+                    <img src="Water-monitor-lizard.jpg" alt="Water Monitor">
+                    <h4 class="flashcard-title">Water Monitor Lizard</h4>
+                    <p class="flashcard-scientific">Varanus salvator</p>
+                </div>
+
+                
+                <div class="flashcard">
+                    <img src="fishing_cat.jpg" alt="Fishing Cat">
+                    <h4 class="flashcard-title">Fishing Cat</h4>
+                    <p class="flashcard-scientific">Prionailurus viverrinus</p>
+                </div>
+
+                
+                <div class="flashcard">
+                    <img src="ridley-turtle.jpg" alt="Olive Ridley Turtle">
+                    <h4 class="flashcard-title">Olive Ridley Turtle</h4>
+                    <p class="flashcard-scientific">Lepidochelys olivacea</p>
+                </div>
+
+                
+                <div class="flashcard">
+                    <img src="macaque.jpg" alt="Rhesus Macaque">
+                    <h4 class="flashcard-title">Rhesus Macaque</h4>
+                    <p class="flashcard-scientific">Macaca mulatta</p>
+                </div>
+
+                
+                <div class="flashcard">
+                    <img src="cobra.jpeg" alt="King Cobra">
+                    <h4 class="flashcard-title">King Cobra</h4>
+                    <p class="flashcard-scientific">Ophiophagus hannah</p>
+                </div>
+
+                
+                <div class="flashcard">
+                    <img src="Wild_Boar_in_Sundarbans.jpg" alt="Wild Boar">
+                    <h4 class="flashcard-title">Wild Boar</h4>
+                    <p class="flashcard-scientific">Sus scrofa</p>
+                </div>
+
+                
+                <div class="flashcard">
+                    <img src="brahminy-kite.jpg" alt="Brahminy Kite">
+                    <h4 class="flashcard-title">Brahminy Kite</h4>
+                    <p class="flashcard-scientific">Haliastur indus</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <div id="forest" class="page">
+        <div class="analysis-container">
+            <button class="back-btn" onclick="navigateTo('home')">← Back to Home</button>
+            <div class="analysis-box">
+                <h2>Forest Cover Analysis</h2>
+                <p style="font-size: 1.1em; color: #666; margin-bottom: 20px;">Upload a satellite or aerial image to analyze forest coverage</p>
+
+                <div class="model-status">
+                    <!-- ✅ Backend server ready! Make sure server.py is running on port 5000 -->
+                </div>
+
+                <div class="upload-area" id="forestUpload"
+                     ondrop="handleDrop(event, 'forest')" 
+                     ondragover="handleDragOver(event)"
+                     ondragleave="handleDragLeave(event)">
+                    <div class="upload-icon">📤</div>
+                    <h3>Drag & Drop Image Here</h3>
+                    <p>or</p>
+                    <label class="file-label" for="forestFile">Choose File</label>
+                    <input type="file" id="forestFile" accept="image/*" onchange="handleFileSelect(event, 'forest')">
+                </div>
+
+                <div class="preview-container" id="forestPreview"></div>
+                <button class="analyze-btn" id="forestAnalyze" onclick="analyzeImage('forest')" disabled>
+                    Analyze Image
+                </button>
+                <button class="analyze-btn" style="background:#0d6efd;" 
+                        id="treeAnalyze" onclick="analyzeImage('trees')" disabled>
+                    Count Trees
+                </button>
+
+
+                <div id="forestResults"></div>
+                <div id="treesResults" class="results-container"></div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000';
+
+        let currentFiles = {
+            plant: null,
+            animal: null,
+            forest: null
+        };
+
+        function navigateTo(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(page).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(e, type) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                displayImage(file, type);
+            }
+        }
+
+        function handleFileSelect(e, type) {
+            const file = e.target.files[0];
+            if (file) {
+                displayImage(file, type);
+            }
+        }
+
+        function displayImage(file, type) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const previewDiv = document.getElementById(`${type}Preview`);
+        previewDiv.innerHTML = `<img src="${e.target.result}" class="preview-image" alt="Uploaded image">`;
+
+        currentFiles[type] = file;
+        document.getElementById(`${type}Analyze`).disabled = false;
+
+        // Enable tree counting only for forest uploads
+        if (type === "forest") {
+            document.getElementById("treeAnalyze").disabled = false;
+        }
+    };
+    reader.readAsDataURL(file);
+}
+
+
+
+
+        async function analyzeImage(type) {
+            const resultsDiv = document.getElementById(`${type}Results`);
+            let analyzeBtn;
+
+if (type === "trees") {
+    analyzeBtn = document.getElementById("treeAnalyze"); // correct ID
+} else {
+    analyzeBtn = document.getElementById(`${type}Analyze`);
+}
+            
+            analyzeBtn.disabled = true;
+            resultsDiv.innerHTML = `<div class="model-status">Analyzing image... <span class="loading"></span></div>`;
+
+            try {
+                if (type === 'forest') {
+                    await analyzeForestCover();
+                } else if (type === 'trees') {
+                    await analyzeTreeCount();
+                } else if (type === 'plant') {
+                    await analyzePlantSpecies();
+                } else if (type === 'animal') {
+                    await analyzeAnimalSpecies();
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error"><strong>Error:</strong> ${error.message}</div>`;
+            } finally {
+                analyzeBtn.disabled = false;
+            }
+        }
+
+        async function analyzeForestCover() {
+            const resultsDiv = document.getElementById('forestResults');
+            
+            try {
+                const formData = new FormData();
+                formData.append('image', currentFiles.forest);
+
+                const response = await fetch(`${API_URL}/analyze/forest`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Server error. Make sure server.py is running on port 5000');
+                }
+
+                const data = await response.json();
+
+                let status = '';
+                let statusColor = '';
+                const percentage = data.forest_coverage;
+                
+                if (percentage > 70) {
+                    status = 'Excellent Forest Cover';
+                    statusColor = '#28a745';
+                } else if (percentage > 50) {
+                    status = 'Good Forest Cover';
+                    statusColor = '#ffc107';
+                } else if (percentage > 30) {
+                    status = 'Moderate Forest Cover';
+                    statusColor = '#fd7e14';
+                } else {
+                    status = 'Low Forest Cover';
+                    statusColor = '#dc3545';
+                }
+
+                resultsDiv.innerHTML = `
+                    <div class="results">
+                        <h3> Forest Cover Analysis Results</h3>
+                        <div class="result-item">
+                            <strong>Forest Coverage:</strong> <span style="color: #28a745; font-size: 1.3em;">${data.forest_coverage}%</span>
+                        </div>
+                        <div class="result-item">
+                            <strong>Non-Forest Area:</strong> ${data.non_forest}%
+                        </div>
+                        <div class="result-item">
+                            <strong>Total Pixels Analyzed:</strong> ${data.total_pixels.toLocaleString()}
+                        </div>
+                        <div class="result-item">
+                            <strong>Status:</strong> <span style="color: ${statusColor}; font-weight: bold;">${status}</span>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                throw new Error(`Failed to analyze forest cover: ${error.message}`);
+            }
+        }
+
+        async function analyzePlantSpecies() {
+            const resultsDiv = document.getElementById('plantResults');
+            
+            try {
+                const formData = new FormData();
+                formData.append('image', currentFiles.plant);
+
+                const response = await fetch(`${API_URL}/analyze/plant`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Server error. Make sure server.py is running on port 5000');
+                }
+
+                const data = await response.json();
+
+                let resultsHTML = `
+                    <div class="results">
+                        <h3> Plant Species Identification</h3>
+                `;
+
+                data.predictions.forEach((pred, idx) => {
+                    
+                    const label = idx === 0 ? 'Top Match' : `${idx + 1}${idx === 1 ? 'nd' : 'rd'} Match`;
+                    
+                    resultsHTML += `
+                        <div class="result-item">
+                            <strong>${label}:</strong> 
+                            ${pred.class} - <span style="color: #28a745; font-weight: bold;">${pred.confidence.toFixed(1)}%</span>
+                        </div>
+                    `;
+                });
+
+                resultsHTML += `</div>`;
+                resultsDiv.innerHTML = resultsHTML;
+
+            } catch (error) {
+                throw new Error(`Failed to analyze plant species: ${error.message}`);
+            }
+        }
+
+        async function analyzeAnimalSpecies() {
+            const resultsDiv = document.getElementById('animalResults');
+            
+            resultsDiv.innerHTML = `
+                <div class="error">
+                    <strong>Coming Soon:</strong> Animal species identification will be added once you train the model!
+                </div>
+            `;
+        }
+        async function analyzeTreeCount() {
+    const resultsDiv = document.getElementById('treesResults');
+    const forestResultsDiv = document.getElementById('forestResults');
+    resultsDiv.innerHTML = `<div class="model-status">Counting trees... <span class="loading"></span></div>`;
+    forestResultsDiv.innerHTML = ''; // clear forest results if needed
+
+    try {
+        const formData = new FormData();
+        formData.append('image', currentFiles.forest);
+
+        const response = await fetch(`${API_URL}/analyze/trees`, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error("Server error. Make sure server.py is running.");
+        }
+
+        // Parse JSON response
+        const data = await response.json();
+
+        resultsDiv.innerHTML = `
+            <div class="results">
+                <h3>Tree Count</h3>
+                <div class="result-item">
+                    <strong>Total Trees Detected:</strong> ${data.tree_count}
+                </div>
+            </div>
+        `;
+
+    } catch (error) {
+        resultsDiv.innerHTML = `<div class="error"><strong>Error:</strong> ${error.message}</div>`;
+    }
+}
+
+
+
+
+    </script>
+</body>
+</html>
